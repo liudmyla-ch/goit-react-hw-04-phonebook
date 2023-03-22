@@ -1,19 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { nanoid } from 'nanoid';
 import ContactForm from './contact-form/ContactForm';
 import Filter from './filter/Filter';
 import ContactList from './contact-list/ContactList';
-
-const LOCALSTORAGE_KEY = 'contacts';
+import {
+  getItemLocalStorage,
+  setItemLocalStorage,
+} from './local-storage-functions/LocalStorageFunc';
 
 const App = () => {
-  const [contacts, setContacts] = useState(
-    () => JSON.parse(window.localStorage.getItem(LOCALSTORAGE_KEY)) || []
-  );
+  const [contacts, setContacts] = useState(() => getItemLocalStorage());
   const [filter, setFilter] = useState('');
 
   useEffect(() => {
-    window.localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(contacts));
+    setItemLocalStorage(contacts);
   }, [contacts]);
 
   const onSubmitForm = values => {
@@ -39,11 +39,14 @@ const App = () => {
     const updatedContacts = contacts?.filter(contact => contact.id !== id);
     setContacts(updatedContacts);
   };
-  console.log(contacts.length);
-  const filterToLoverCase = filter.toLowerCase();
-  const filteredContacts = contacts.filter(contact =>
-    contact.name.toLowerCase().includes(filterToLoverCase)
-  );
+
+  const filterContacts = () => {
+    const filterToLoverCase = filter.toLowerCase();
+    const filteredContacts = contacts.filter(contact =>
+      contact.name.toLowerCase().includes(filterToLoverCase)
+    );
+    return filteredContacts;
+  };
 
   return (
     <>
@@ -56,7 +59,7 @@ const App = () => {
           <h2>Contacts</h2>
           <Filter onChangeFilter={onChangeFilter} />
           <ContactList
-            filteredContacts={filteredContacts}
+            filteredContacts={filterContacts}
             onDeleteContact={onDeleteContact}
           />
         </>
