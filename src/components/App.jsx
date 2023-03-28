@@ -59,7 +59,7 @@ const App = () => {
           <h2>Contacts</h2>
           <Filter onChangeFilter={onChangeFilter} />
           <ContactList
-            filteredContacts={filterContacts}
+            filteredContacts={filterContacts()}
             onDeleteContact={onDeleteContact}
           />
         </>
